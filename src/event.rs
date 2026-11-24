@@ -31,8 +31,7 @@ pub fn spawn_input_task(tokio_x: mpsc::UnboundedSender<AppEvent>){
             //Activer la lecture
             if let Ok(Event::Key(key)) = event::read(){
                 //Envoyer l'evenement
-                let _ = tokio_x.send(AppEvent::Key(key)).is_err();
-                {
+                if tokio_x.send(AppEvent::Key(key)).is_err(){
                     break;
                 }
             }

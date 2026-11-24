@@ -97,9 +97,9 @@ async fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::R
                                     //Auteur du message
                                     let author = app_state.username.clone();
                                     //Ajouter le message a la table de Hash
-                                    app_state.push_message(&channel, content, author);
+                                    app_state.push_message(&channel, author, content);
                                     app_state.input.clear(); //Vider le champ input
-                                    //TODO -------------------envoyer WIREMESSAGE vers la tache reseau
+                                    //TODO ---------envoyer WIREMESSAGE vers la tache reseau
                                 }
                             }
                             _ => {}
