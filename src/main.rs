@@ -21,6 +21,7 @@ use state::{ActivePane, AppState};
 use std::io;
 //Async - Synch
 use tokio::sync::mpsc;
+use crate::net::WireMessage;
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
@@ -42,15 +43,16 @@ async fn main() -> io::Result<()> {
 async fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> {
     //Etat de l'application
     let mut app_state = AppState::new("Vous".to_string());
-    let (tx, mut rx) = mpsc::unbounded_channel::<AppEvent>();
+    let (event_tx, mut event_rx) = mpsc::unbounded_channel::<AppEvent>();
+    let (net_tx, net_rx) = mpsc::unbounded_channel::<WireMessage>();
 
-    spawn_input_task(tx.clone());
-    spawn_network_task(tx);
+    spawn_input_task(event_tx.clone());
+    spawn_network_task(event_tx,net_rx);
 
     //Boucle infinie du chat async
     while !app_state.should_quit {
         terminal.draw(|frame| ui::draw(frame, &app_state))?;
-            if let Some(event) = rx.recv().await {
+            if let Some(event) = event_rx.recv().await {
                 match event {
                     AppEvent::Key(key) => {
                         //Si Ctrl + c = Quit
@@ -96,10 +98,15 @@ async fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::R
                                     let channel = app_state.active_channel_name().to_string(); //Recup le salon
                                     //Auteur du message
                                     let author = app_state.username.clone();
+                                    let msg = WireMessage::Chat {
+                                        channel: channel.clone(),
+                                        author: author.clone(),
+                                        content: content.clone(),
+                                    };
                                     //Ajouter le message a la table de Hash
-                                    app_state.push_message(&channel, author, content);
+                                    app_state.push_message(&channel, author, content);//Ajoute le message
                                     app_state.input.clear(); //Vider le champ input
-                                    //TODO ---------envoyer WIREMESSAGE vers la tache reseau
+                                    let _ = net_tx.send(msg);
                                 }
                             }
                             _ => {}

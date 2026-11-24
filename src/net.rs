@@ -17,15 +17,20 @@ pub enum WireMessage{
 }
 
 //Simutateur => a remplacer par TcpStream ou tokio-tungstenite
-pub fn spawn_network_task(tokio_x: mpsc::UnboundedSender<AppEvent>){
+pub fn spawn_network_task(
+    event_x: mpsc::UnboundedSender<AppEvent>,
+    mut net_rx: mpsc::UnboundedReceiver<WireMessage>,
+    ){
     tokio::spawn(async move {
-        //Timer entre chaque envoi de message
-        tokio::time::sleep(std::time::Duration::from_secs(2)).await; //2 secondes entre chaque message
-        //Faux message de test
-        let _ = tokio_x.send(AppEvent::NetworkMessage {
-            channel: "general".to_string(),
-            author: "Bot de test".to_string(),
-            content: "Bonjour je suis un bot de test du chat Rust TUI".to_string(),
-        });
+        while let Some (msg) = net_rx.recv().await {
+            //Serialise les données en JSON + \n + ecrire dans TcpStream / Websocket
+            if let WireMessage::Chat {channel, author, content } = msg {
+                let _ = event_x.send(AppEvent::NetworkMessage {
+                    channel,
+                    author: format!("{author} (envoyé)"),
+                    content,
+                });
+            }
+        }
     });
 }
