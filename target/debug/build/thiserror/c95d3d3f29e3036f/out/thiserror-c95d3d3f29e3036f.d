@@ -1,0 +1,14 @@
+C:\Mic_Works\Projets_Rust\Chat-Rust-Like-Discord\target\debug\build\thiserror/c95d3d3f29e3036f\out\thiserror-c95d3d3f29e3036f.d: C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\lib.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\aserror.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\display.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\var.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\private.rs C:\Mic_Works\Projets_Rust\Chat-Rust-Like-Discord\target\debug\build\thiserror/8fc824a4bbbae1af\out/private.rs
+
+C:\Mic_Works\Projets_Rust\Chat-Rust-Like-Discord\target\debug\build\thiserror/c95d3d3f29e3036f\out\libthiserror-c95d3d3f29e3036f.rlib: C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\lib.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\aserror.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\display.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\var.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\private.rs C:\Mic_Works\Projets_Rust\Chat-Rust-Like-Discord\target\debug\build\thiserror/8fc824a4bbbae1af\out/private.rs
+
+C:\Mic_Works\Projets_Rust\Chat-Rust-Like-Discord\target\debug\build\thiserror/c95d3d3f29e3036f\out\libthiserror-c95d3d3f29e3036f.rmeta: C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\lib.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\aserror.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\display.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\var.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\private.rs C:\Mic_Works\Projets_Rust\Chat-Rust-Like-Discord\target\debug\build\thiserror/8fc824a4bbbae1af\out/private.rs
+
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\lib.rs:
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\aserror.rs:
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\display.rs:
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\var.rs:
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\thiserror-2.0.21\src\private.rs:
+C:\Mic_Works\Projets_Rust\Chat-Rust-Like-Discord\target\debug\build\thiserror/8fc824a4bbbae1af\out/private.rs:
+
+# env-dep:OUT_DIR=C:\\Mic_Works\\Projets_Rust\\Chat-Rust-Like-Discord\\target\\debug\\build\\thiserror/8fc824a4bbbae1af\\out

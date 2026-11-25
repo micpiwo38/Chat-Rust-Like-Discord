@@ -1,0 +1,10 @@
+C:\Mic_Works\Projets_Rust\Chat-Rust-Like-Discord\target\debug\build\ratatui/d883a94f23277f6a\out\ratatui-d883a94f23277f6a.d: C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\lib.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\prelude.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\widgets.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\widgets\stateful_widget_ref.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\widgets\widget_ref.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\init.rs
+
+C:\Mic_Works\Projets_Rust\Chat-Rust-Like-Discord\target\debug\build\ratatui/d883a94f23277f6a\out\libratatui-d883a94f23277f6a.rmeta: C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\lib.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\prelude.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\widgets.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\widgets\stateful_widget_ref.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\widgets\widget_ref.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\init.rs
+
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\lib.rs:
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\prelude.rs:
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\widgets.rs:
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\widgets\stateful_widget_ref.rs:
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\widgets\widget_ref.rs:
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ratatui-0.30.2\src\init.rs:

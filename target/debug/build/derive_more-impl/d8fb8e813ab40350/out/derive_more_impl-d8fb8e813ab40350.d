@@ -1,0 +1,9 @@
+C:\Mic_Works\Projets_Rust\Chat-Rust-Like-Discord\target\debug\build\derive_more-impl/d8fb8e813ab40350\out\derive_more_impl-d8fb8e813ab40350.d: C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\lib.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\utils.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\is_variant.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\../README.md C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\../doc/is_variant.md
+
+C:\Mic_Works\Projets_Rust\Chat-Rust-Like-Discord\target\debug\build\derive_more-impl/d8fb8e813ab40350\out\derive_more_impl-d8fb8e813ab40350.dll: C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\lib.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\utils.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\is_variant.rs C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\../README.md C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\../doc/is_variant.md
+
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\lib.rs:
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\utils.rs:
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\is_variant.rs:
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\../README.md:
+C:\Users\micpi\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\derive_more-impl-2.1.1\src\../doc/is_variant.md:
