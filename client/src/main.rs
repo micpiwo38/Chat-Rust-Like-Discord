@@ -22,6 +22,7 @@ use std::io;
 //Async - Synch
 use tokio::sync::mpsc;
 use crate::net::WireMessage;
+use crate::state::ScreenMode;
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
@@ -43,6 +44,8 @@ async fn main() -> io::Result<()> {
 async fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::Result<()> {
     //Etat de l'application
     let mut app_state = AppState::new("Vous".to_string());
+    //Par defaut l'ecran de login avec le chat
+    app_state.screen = ScreenMode::Login;
     let (event_tx, mut event_rx) = mpsc::unbounded_channel::<AppEvent>();
     let (net_tx, net_rx) = mpsc::unbounded_channel::<WireMessage>();
 
@@ -62,54 +65,64 @@ async fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::R
                         }
                         //Le entrée clavier
 
-                        match key.code {
-                            //Avec Tab => on passe d'un panneau a l'autre
-                            KeyCode::Tab => {
-                                app_state.active_pane = match app_state.active_pane {
-                                    ActivePane::Input => ActivePane::Channels,
-                                    ActivePane::Channels => ActivePane::Input,
-                                };
-                            }
-                            //La touche UP => si on est dans le bloc changes, on change de salon
-                            KeyCode::Up if app_state.active_pane == ActivePane::Channels => {
-                                if app_state.current_channel > 0{
-                                    app_state.current_channel -= 1;
+                        match app_state.screen {
+                            ScreenMode::Login => match key.code {
+                                KeyCode::Char(c) => {
+                                    app_state.login_input.push(c);
                                 }
-                            }
-                            //La touche Down => si on est dans le bloc changes, on change de salon
-                            KeyCode::Down if app_state.active_pane == ActivePane::Channels => {
-                                if app_state.current_channel + 1 < app_state.channels.len(){
-                                    app_state.current_channel += 1;
+                                KeyCode::Backspace => {
+                                    app_state.login_input.pop();
                                 }
-                            }
-                            //La touche C = Si on est dans le panneau Input
-                            KeyCode::Char(c) if app_state.active_pane == ActivePane::Input => {
-                                app_state.input.push(c);
-                            }
-                            //La touche back space => si on est dans le bloc input
-                            KeyCode::Backspace if app_state.active_pane == ActivePane::Input => {
-                                app_state.input.pop();
-                            }
-                            //La touche entrée pour envoyer un message => si on est dans input
-                            KeyCode::Enter if app_state.active_pane == ActivePane::Input => {
-                                let content = app_state.input.trim().to_string(); //Supprime les espaces dans le contenu input message
-                                //Si input n'est pas vide
-                                if !content.is_empty(){
-                                    let channel = app_state.active_channel_name().to_string(); //Recup le salon
-                                    //Auteur du message
-                                    let author = app_state.username.clone();
-                                    let msg = WireMessage::Chat {
-                                        channel: channel.clone(),
-                                        author: author.clone(),
-                                        content: content.clone(),
+                                KeyCode::Enter => {
+                                    let pseudo = app_state.login_input.trim().to_string();
+                                    if !pseudo.is_empty() {
+                                        app_state.username = pseudo;
+                                        app_state.login_input.clear();
+                                        app_state.input.clear(); // Important : vide ce qui avait été tapé pendant le login
+                                        app_state.screen = ScreenMode::Chat;
+                                    }
+                                }
+                                _ => {}
+                            },
+                            ScreenMode::Chat => match key.code {
+                                KeyCode::Tab => {
+                                    app_state.active_pane = match app_state.active_pane {
+                                        ActivePane::Input => ActivePane::Channels,
+                                        ActivePane::Channels => ActivePane::Input,
                                     };
-                                    //Ajouter le message a la table de Hash
-                                    let _ = net_tx.send(msg);
-                                    app_state.input.clear(); //Vider le champ input
-
                                 }
-                            }
-                            _ => {}
+                                KeyCode::Up if app_state.active_pane == ActivePane::Channels => {
+                                    if app_state.current_channel > 0 {
+                                        app_state.current_channel -= 1;
+                                    }
+                                }
+                                KeyCode::Down if app_state.active_pane == ActivePane::Channels => {
+                                    if app_state.current_channel + 1 < app_state.channels.len() {
+                                        app_state.current_channel += 1;
+                                    }
+                                }
+                                KeyCode::Char(c) if app_state.active_pane == ActivePane::Input => {
+                                    app_state.input.push(c);
+                                }
+                                KeyCode::Backspace if app_state.active_pane == ActivePane::Input => {
+                                    app_state.input.pop();
+                                }
+                                KeyCode::Enter if app_state.active_pane == ActivePane::Input => {
+                                    let content = app_state.input.trim().to_string();
+                                    if !content.is_empty() {
+                                        let channel = app_state.active_channel_name().to_string();
+                                        let author = app_state.username.clone();
+                                        let msg = WireMessage::Chat {
+                                            channel,
+                                            author,
+                                            content,
+                                        };
+                                        let _ = net_tx.send(msg);
+                                        app_state.input.clear();
+                                    }
+                                }
+                                _ => {}
+                            },
                         }
                     }
                     AppEvent::NetworkMessage {

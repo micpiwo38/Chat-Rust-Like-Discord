@@ -2,6 +2,12 @@
 //Carte de Hachage => résistance contre les attaques de HashDoS
 use std::collections::HashMap;
 
+
+//Login
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ScreenMode{
+    Login, Chat
+}
 //Enumeration des panneau actif
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ActivePane{
@@ -22,6 +28,8 @@ pub struct AppState{
     pub input: String, //Entrée clavier utilisateur
     pub active_pane: ActivePane, //Panneau actif
     pub should_quit: bool, //Quitter le salon
+    pub screen: ScreenMode, //Login - ou le chat
+    pub login_input: String,
 }
 
 //Implementation de l'etat de l'application
@@ -45,6 +53,8 @@ impl AppState{
             input: String::new(),
             active_pane: ActivePane::Input, //Enum Input quand dans le salon
             should_quit: false,
+            screen: ScreenMode::Login,
+            login_input: String::new(),
         }
     }
 

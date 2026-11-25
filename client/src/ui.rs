@@ -1,6 +1,6 @@
 //Le rendu (ui.rs) : fonction pure qui lit AppState et dessine le layout avec ratatui.
 //Etat de l'application
-use crate::state::{ActivePane, AppState};
+use crate::state::{ActivePane, AppState, ScreenMode};
 //Ratatui => UI
 use ratatui::{
     Frame,
@@ -9,8 +9,65 @@ use ratatui::{
     text::{Line, Span},
     widgets::{Block, Borders, List, ListItem, Paragraph, Wrap},
 };
+use ratatui::style::Stylize;
+use ratatui::widgets::Padding;
 
-pub fn draw(frame: &mut Frame, state: &AppState) {
+pub fn draw(frame: &mut Frame, state: &AppState){
+    match state.screen {
+        ScreenMode::Login => draw_login(frame, state),
+        ScreenMode::Chat => draw_chat(frame, state),
+    }
+}
+
+fn draw_login(frame: &mut Frame, state: &AppState) {
+    let area = frame.area();
+    let box_area = ratatui::layout::Rect {
+        x: area.width / 4,
+        y: area.height / 3,
+        width: area.width.max(20) / 2,
+        height: 3,
+    };
+
+    let widget = ratatui::widgets::Paragraph::new(state.login_input.as_str()).block(
+        ratatui::widgets::Block::default()
+            .title(" Choisis ton pseudo (Entrée pour valider) ")
+            .borders(ratatui::widgets::Borders::ALL),
+    );
+    frame.render_widget(widget, box_area);
+
+    // Positionne le curseur juste après le texte saisi (à l'intérieur des bordures : +1 en x, +1 en y)
+    let cursor_x = box_area.x + 1 + state.login_input.chars().count() as u16;
+    let cursor_y = box_area.y + 1;
+    frame.set_cursor_position((cursor_x.min(box_area.x + box_area.width.saturating_sub(2)), cursor_y));
+}
+
+fn color_for_author(author: &str, own_username: &str) -> Color {
+    if author == "Système" {
+        return Color::Yellow;
+    }
+    if author == own_username {
+        return Color::Green;
+    }
+
+    const PALETTE: &[Color] = &[
+        Color::Cyan,
+        Color::Magenta,
+        Color::Blue,
+        Color::LightRed,
+        Color::LightGreen,
+        Color::LightBlue,
+        Color::LightMagenta,
+    ];
+
+    let mut hash: usize = 0;
+    for b in author.as_bytes() {
+        hash = hash.wrapping_mul(31).wrapping_add(*b as usize);
+    }
+
+    PALETTE[hash % PALETTE.len()]
+}
+
+pub fn draw_chat(frame: &mut Frame, state: &AppState) {
     //Couper le layout principale en 2 parties horizontale
     let root = Layout::default()
         .direction(Direction::Horizontal)
@@ -73,11 +130,12 @@ pub fn draw(frame: &mut Frame, state: &AppState) {
             messages
                 .iter()
                 .map(|m| {
+                    let author_color = color_for_author(&m.author, &state.username);
                     Line::from(vec![
                         Span::styled(
                             format!("[{}]", m.author),
                             Style::default()
-                                .fg(Color::LightMagenta)
+                                .fg(author_color)
                                 .add_modifier(Modifier::BOLD),
                         ),
                         Span::raw(&m.content),
@@ -116,4 +174,12 @@ pub fn draw(frame: &mut Frame, state: &AppState) {
     );
     //Afficher le bloc input Droite Verticale Bas
     frame.render_widget(input_widget, right[1]);
+    //Afficher le curseur dans la zone input text
+    if state.active_pane == ActivePane::Input {
+        let char_count = state.input.chars().count() as u16;
+        let max_x = right[1].x + right[1].width.saturating_sub(2);
+        let cursor_x = (right[1].x + 1 + char_count).min(max_x);
+        let cursor_y = right[1].y + 1;
+        frame.set_cursor_position((cursor_x, cursor_y));
+    }
 }
