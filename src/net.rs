@@ -8,8 +8,8 @@ use tokio::sync::mpsc;
 
 //Enumeration du chat -> lien avec AppState
 #[derive(Serialize, Deserialize, Debug)]
-pub enum WireMessage{
-    Chat{
+pub enum WireMessage {
+    Chat {
         channel: String,
         author: String,
         content: String,
@@ -20,17 +20,20 @@ pub enum WireMessage{
 pub fn spawn_network_task(
     event_x: mpsc::UnboundedSender<AppEvent>,
     mut net_rx: mpsc::UnboundedReceiver<WireMessage>,
-    ){
+) {
     tokio::spawn(async move {
-        while let Some (msg) = net_rx.recv().await {
+        while let Some(msg) = net_rx.recv().await {
             //Serialise les données en JSON + \n + ecrire dans TcpStream / Websocket
-            if let WireMessage::Chat {channel, author, content } = msg {
-                let _ = event_x.send(AppEvent::NetworkMessage {
-                    channel,
-                    author: format!("{author} (envoyé)"),
-                    content,
-                });
-            }
+            let WireMessage::Chat {
+                channel,
+                author,
+                content,
+            } = msg;
+            let _ = event_x.send(AppEvent::NetworkMessage {
+                channel,
+                author: format!("{author} (envoyé)"),
+                content,
+            });
         }
     });
 }

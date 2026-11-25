@@ -6,15 +6,15 @@ et reçoit les messages réseau via un mpsc::unbounded_channel.
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyModifiers}; //Gestion des evenements
 //Timer
-use std::time::Duration;
+use std::time::{Duration, Instant};
 //Asynchrone
 use tokio::sync::mpsc;
 
 //Enumeration des evenements = lier state.rs avec network
 #[derive(Debug)]
-pub enum AppEvent{
+pub enum AppEvent {
     Key(KeyEvent), //Entrée clavier
-    NetworkMessage{
+    NetworkMessage {
         channel: String,
         author: String,
         content: String,
@@ -23,25 +23,41 @@ pub enum AppEvent{
 }
 
 //Lancer les events d'ecoute clavier dans un thread dédier pour ne jamais bloquer async Tokio
-pub fn spawn_input_task(tokio_x: mpsc::UnboundedSender<AppEvent>){
+pub fn spawn_input_task(tokio_x: mpsc::UnboundedSender<AppEvent>) {
     //Le thread dédier
-    std::thread::spawn(move || loop{
-        //Timer
-        if event::poll(Duration::from_millis(100)).unwrap_or(false){
-            //Activer la lecture
-            if let Ok(Event::Key(key)) = event::read(){
-                //Envoyer l'evenement
-                if tokio_x.send(AppEvent::Key(key)).is_err(){
-                    break;
+    std::thread::spawn(move || {
+        let mut last_key: Option<KeyCode> = None;
+        let mut last_time = Instant::now();
+
+        loop {
+            //Timer
+            if event::poll(Duration::from_millis(100)).unwrap_or(false) {
+                //Activer la lecture
+                if let Ok(Event::Key(key)) = event::read() {
+                    //Filter les inputs avec un delais
+                    let now = Instant::now();
+                    if let Some(last) = last_key {
+                        if last == key.code
+                            && now.duration_since(last_time) < Duration::from_millis(50)
+                        {
+                            continue; //Ignore les entrées doublée (sous windows 11)
+                        }
+                    }
+                    last_key = Some(key.code);
+                    last_time = now;
+                    //Envoyer l'evenement
+                    if tokio_x.send(AppEvent::Key(key)).is_err() {
+                        break;
+                    }
                 }
+            } else if tokio_x.send(AppEvent::Tick).is_err() {
+                break;
             }
-        }else if  tokio_x.send(AppEvent::Tick).is_err(){
-            break;
         }
     });
 }
 
 //Racourci clavier pour quitter Salon ? Application ? Ctrl + c
-pub fn is_quit_shortcut(key: &KeyEvent) -> bool{
+pub fn is_quit_shortcut(key: &KeyEvent) -> bool {
     key.modifiers.contains(KeyModifiers::CONTROL) && key.code == KeyCode::Char('c')
 }
