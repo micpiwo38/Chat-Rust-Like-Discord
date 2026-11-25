@@ -1,1 +1,7 @@
+
+//------COTE CLIENT-------//
+
 1 - ajouter un curseur qui clignotte dans input
+
+
+//---------COTE SERVEUR--------//
