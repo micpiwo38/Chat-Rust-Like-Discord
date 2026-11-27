@@ -9,8 +9,8 @@ use ratatui::{
     text::{Line, Span},
     widgets::{Block, Borders, List, ListItem, Paragraph, Wrap},
 };
-use ratatui::style::Stylize;
-use ratatui::widgets::Padding;
+
+
 
 pub fn draw(frame: &mut Frame, state: &AppState){
     match state.screen {
@@ -146,17 +146,33 @@ pub fn draw_chat(frame: &mut Frame, state: &AppState) {
         .unwrap_or_default();
 
     //Le bloc des messages
-    let messages_widget = Paragraph::new(message_lines)
+    let messages_widget = Paragraph::new(message_lines.clone())
         .wrap(Wrap { trim: true })
         .block(
             Block::default()
                 .title(format!(
-                    " #{current_channel} - Tab: Focus | Ctrl + c: Quitter"
+                    " #{current_channel} - Tab: Salon - Chat | PgUp/PgDn: scroll | Ctrl + c: Quitter"
                 ))
                 .borders(Borders::ALL),
         );
+    //Hauteur et largeur interieurs (hors bordure)
+    let inner_width = right[0].width.saturating_sub(2).max(1) as usize;
+    let inner_height = right[0].height.saturating_sub(2);
+    let total_lines: u16 = message_lines.iter().map(|line|{
+        let line_len = line.width(); //Largeur d'une cellule
+        let wrapped = if line_len == 0{
+            1
+        }else{
+            line_len.div_ceil(inner_width.into())
+        };
+        wrapped as u16
+    }).sum();
+
+    let max_scroll = total_lines.saturating_sub(inner_height);
+    let effective_offset = state.scroll_offset.min(max_scroll);
+    let scroll_y = max_scroll.saturating_sub(effective_offset);
     //Afficher le panneau de droite
-    frame.render_widget(messages_widget, right[0]);
+    frame.render_widget(messages_widget.scroll((scroll_y,0)), right[0]);
 
     //Bordure de la zone d'entrée des messages
     let input_border = if state.active_pane == ActivePane::Input {

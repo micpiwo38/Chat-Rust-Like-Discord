@@ -4,9 +4,9 @@ lit le clavier (dans un thread dédié ou via crossterm::event::EventStream)
 et reçoit les messages réseau via un mpsc::unbounded_channel.
 */
 
-use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers}; //Gestion des evenements
+use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers, MouseEventKind}; //Gestion des evenements
 //Timer
-use std::time::{Duration, Instant};
+use std::time::{Duration};
 //Asynchrone
 use tokio::sync::mpsc;
 
@@ -14,6 +14,7 @@ use tokio::sync::mpsc;
 #[derive(Debug)]
 pub enum AppEvent {
     Key(KeyEvent), //Entrée clavier
+    Scroll(i16),
     NetworkMessage {
         channel: String,
         author: String,
@@ -26,14 +27,25 @@ pub enum AppEvent {
 pub fn spawn_input_task(tokio_x: mpsc::UnboundedSender<AppEvent>) {
     std::thread::spawn(move || loop {
         if event::poll(Duration::from_millis(100)).unwrap_or(false) {
-            if let Ok(Event::Key(key)) = event::read() {
-                // On ne garde que l'appui réel de la touche (ignore Repeat et Release)
-                if key.kind != KeyEventKind::Press {
-                    continue;
+            match event::read() {
+                Ok(Event::Key(key)) => {
+                    if key.kind != KeyEventKind::Press{
+                        continue;
+                    }
+                    if tokio_x.send(AppEvent::Key(key)).is_err() {
+                        break;
+                    }
                 }
-                if tokio_x.send(AppEvent::Key(key)).is_err() {
-                    break;
+                Ok(Event::Mouse(mouse)) => match mouse.kind{
+                    MouseEventKind::ScrollUp => {
+                        let _ = tokio_x.send(AppEvent::Scroll(3));
+                    }
+                    MouseEventKind::ScrollDown => {
+                        let _ = tokio_x.send(AppEvent::Scroll(-3));
+                    }
+                    _ => {}
                 }
+                _ => {}
             }
         } else if tokio_x.send(AppEvent::Tick).is_err() {
             break;

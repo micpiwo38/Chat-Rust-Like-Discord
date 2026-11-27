@@ -79,7 +79,7 @@ pub fn spawn_network_task(
                             let _ = event_tx.send(AppEvent::NetworkMessage {
                                 channel: "General".to_string(),
                                 author: "Système".to_string(),
-                                content: "Erreur de connexion au serveur ! {e}".to_string(),
+                                content: format!("Erreur de connexion au serveur ! {e}").to_string(),
                             });
                             break;
                         }

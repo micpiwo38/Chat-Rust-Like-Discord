@@ -29,7 +29,8 @@ pub struct AppState{
     pub active_pane: ActivePane, //Panneau actif
     pub should_quit: bool, //Quitter le salon
     pub screen: ScreenMode, //Login - ou le chat
-    pub login_input: String,
+    pub login_input: String, //Champ input connexion
+    pub scroll_offset: u16, //0 = collé en bas
 }
 
 //Implementation de l'etat de l'application
@@ -55,6 +56,7 @@ impl AppState{
             should_quit: false,
             screen: ScreenMode::Login,
             login_input: String::new(),
+            scroll_offset: 0,
         }
     }
 

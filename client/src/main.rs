@@ -5,7 +5,7 @@ mod ui;
 
 //Gestion du panneau generale
 use crossterm::{
-    event::KeyCode,
+    event::{KeyCode, EnableMouseCapture, DisableMouseCapture},
     execute,
     terminal::{ EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
@@ -28,13 +28,13 @@ use crate::state::ScreenMode;
 async fn main() -> io::Result<()> {
     enable_raw_mode()?;
     let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
+    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
     let result = run_app(&mut terminal).await;
     //Restauration systematique du terminal
     disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen, DisableMouseCapture)?;
     terminal.show_cursor()?;
 
     result
@@ -92,11 +92,13 @@ async fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::R
                                     };
                                 }
                                 KeyCode::Up if app_state.active_pane == ActivePane::Channels => {
+                                    app_state.scroll_offset = app_state.scroll_offset.saturating_add_signed(5);
                                     if app_state.current_channel > 0 {
                                         app_state.current_channel -= 1;
                                     }
                                 }
                                 KeyCode::Down if app_state.active_pane == ActivePane::Channels => {
+                                    app_state.scroll_offset = app_state.scroll_offset.saturating_sub_signed(5);
                                     if app_state.current_channel + 1 < app_state.channels.len() {
                                         app_state.current_channel += 1;
                                     }
@@ -121,6 +123,7 @@ async fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::R
                                         app_state.input.clear();
                                     }
                                 }
+
                                 _ => {}
                             },
                         }
@@ -133,6 +136,14 @@ async fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> io::R
                         app_state.push_message(&channel, author, content);
                     }
                     AppEvent::Tick => {}
+                    AppEvent::Scroll(delta) if app_state.screen == ScreenMode::Chat => {
+                        if delta > 0 {
+                            app_state.scroll_offset = app_state.scroll_offset.saturating_add(delta as u16);
+                        }else{
+                            app_state.scroll_offset = app_state.scroll_offset.saturating_sub(delta.unsigned_abs());
+                        }
+                    }
+                    _ => {}
                 }
             }
     }
