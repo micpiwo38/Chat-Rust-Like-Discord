@@ -30,7 +30,7 @@ pub fn spawn_network_task(
         let stream = match TcpStream::connect(&addr).await {
             Ok(s) => {
                 let _ = event_tx.send(AppEvent::NetworkMessage {
-                    channel: "Genral".to_string(),
+                    channel: "general".to_string(),
                     author: "Système".to_string(),
                     content: format!("Bienvenue, vous êtes connecté a : {}!", addr),
                 });
@@ -38,7 +38,7 @@ pub fn spawn_network_task(
             }
             Err(e) => {
                 let _ = event_tx.send(AppEvent::NetworkMessage {
-                    channel: "General".to_string(),
+                    channel: "general".to_string(),
                     author: "Système".to_string(),
                     content: format!("Erreur de connexion au serveur ! {e}"),
                 });
@@ -69,7 +69,7 @@ pub fn spawn_network_task(
                         }
                         Ok(None) => {
                             let _ = event_tx.send(AppEvent::NetworkMessage {
-                                channel: "General".to_string(),
+                                channel: "general".to_string(),
                                 author: "Système".to_string(),
                                 content: "Vous êtes déconnecté du serveur".to_string(),
                             });
@@ -77,7 +77,7 @@ pub fn spawn_network_task(
                         }
                         Err(e) => {
                             let _ = event_tx.send(AppEvent::NetworkMessage {
-                                channel: "General".to_string(),
+                                channel: "general".to_string(),
                                 author: "Système".to_string(),
                                 content: format!("Erreur de connexion au serveur ! {e}").to_string(),
                             });

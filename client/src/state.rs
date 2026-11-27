@@ -13,7 +13,7 @@ pub enum ScreenMode{
 pub enum ActivePane{
     Channels, Input,
 }
-//La structure des messages
+//La structure des messages dans l'input
 #[derive(Debug, Clone)]
 pub struct ChatMessage{
     pub author: String,
