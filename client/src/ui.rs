@@ -12,7 +12,7 @@ use ratatui::{
 
 
 
-pub fn draw(frame: &mut Frame, state: &AppState){
+pub fn draw(frame: &mut Frame, state: &mut AppState){
     match state.screen {
         ScreenMode::Login => draw_login(frame, state),
         ScreenMode::Chat => draw_chat(frame, state),
@@ -67,7 +67,7 @@ fn color_for_author(author: &str, own_username: &str) -> Color {
     PALETTE[hash % PALETTE.len()]
 }
 
-pub fn draw_chat(frame: &mut Frame, state: &AppState) {
+pub fn draw_chat(frame: &mut Frame, state: &mut AppState) {
     //Couper le layout principale en 2 parties horizontale
     let root = Layout::default()
         .direction(Direction::Horizontal)
@@ -111,6 +111,7 @@ pub fn draw_chat(frame: &mut Frame, state: &AppState) {
             .borders(Borders::ALL)
             .border_style(Style::default().fg(channels_border)),
     );
+    state.channels_area = root[0];
     //Afficher le panneau de gauche
     frame.render_widget(channels_widget, root[0]);
     //-----------------------------------------------PANNEAU DE DROITE-----------------------------------------------//
@@ -119,6 +120,7 @@ pub fn draw_chat(frame: &mut Frame, state: &AppState) {
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(1), Constraint::Max(3)])
         .split(root[1]);
+    state.input_area = right[1];
     //Salon en cours
     let current_channel = state.active_channel_name();
     //Ligne des message de la hash map

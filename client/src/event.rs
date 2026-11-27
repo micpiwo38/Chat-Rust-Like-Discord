@@ -4,7 +4,7 @@ lit le clavier (dans un thread dédié ou via crossterm::event::EventStream)
 et reçoit les messages réseau via un mpsc::unbounded_channel.
 */
 
-use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers, MouseEventKind}; //Gestion des evenements
+use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers, MouseButton, MouseEventKind}; //Gestion des evenements
 //Timer
 use std::time::{Duration};
 //Asynchrone
@@ -15,6 +15,7 @@ use tokio::sync::mpsc;
 pub enum AppEvent {
     Key(KeyEvent), //Entrée clavier
     Scroll(i16),
+    Click((i16, i16)),
     NetworkMessage {
         channel: String,
         author: String,
@@ -37,11 +38,19 @@ pub fn spawn_input_task(tokio_x: mpsc::UnboundedSender<AppEvent>) {
                     }
                 }
                 Ok(Event::Mouse(mouse)) => match mouse.kind{
+                    //Scroll molette UP
                     MouseEventKind::ScrollUp => {
                         let _ = tokio_x.send(AppEvent::Scroll(3));
                     }
+                    //Scroll molette Down
                     MouseEventKind::ScrollDown => {
                         let _ = tokio_x.send(AppEvent::Scroll(-3));
+                    }
+                    //Click gauche
+                    MouseEventKind::Down(MouseButton::Left) => {
+                        let _ = tokio_x.send(AppEvent::Click(
+                            (mouse.column as i16, mouse.row as i16)
+                        ));
                     }
                     _ => {}
                 }

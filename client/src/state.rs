@@ -1,7 +1,7 @@
 //L'état de l'application (state.rs) : salons, messages, buffer de saisie, zone active (Input ou Channels), scroll.
 //Carte de Hachage => résistance contre les attaques de HashDoS
-use std::collections::HashMap;
-
+use std::collections::{HashMap};
+use ratatui::layout::Rect;
 
 //Login
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -31,6 +31,8 @@ pub struct AppState{
     pub screen: ScreenMode, //Login - ou le chat
     pub login_input: String, //Champ input connexion
     pub scroll_offset: u16, //0 = collé en bas
+    pub channels_area: Rect, //Zone panneau gauche => les salons
+    pub input_area: Rect, //Zone panneau droite => chat
 }
 
 //Implementation de l'etat de l'application
@@ -47,16 +49,18 @@ impl AppState{
             messages.insert(channel.clone(), Vec::new());
         }
         Self{
-            username,
-            channels,
-            current_channel: 0,
-            messages,
-            input: String::new(),
-            active_pane: ActivePane::Input, //Enum Input quand dans le salon
-            should_quit: false,
-            screen: ScreenMode::Login,
-            login_input: String::new(),
-            scroll_offset: 0,
+            username, //Nom utilisateur
+            channels, //Liste des salons
+            current_channel: 0, //Salon actif
+            messages, //Table de Hash des messages
+            input: String::new(), //Entree utilisateur
+            active_pane: ActivePane::Input, //Panneau actif
+            should_quit: false, //Quitter ?
+            screen: ScreenMode::Login, //Panneau par default a l'ouverture du programme
+            login_input: String::new(), //Connexion
+            scroll_offset: 0, //Position du scroll par defaut
+            channels_area: Rect::default(), //Zone du panneau de gauche les salons
+            input_area: Rect::default(), //Zone du panneau de droite du chat
         }
     }
 
@@ -71,5 +75,25 @@ impl AppState{
             .entry(channel.to_string())
             .or_default()
             .push(ChatMessage{author, content});
+    }
+
+    pub fn on_network_message(&mut self, channel: String,author: String, content: String){
+        //Si chat est actif
+        let is_active = self.screen == ScreenMode::Chat && self.active_channel_name() == channel;
+        //Ajoute un message => ce truc n'est pas encore lu
+        self.push_message(&channel, author, content);
+        //Check le scroll des salons
+        if is_active{
+            self.scroll_offset = 0; //Met en bas du scroll
+        }
+    }
+
+    //Changement de salon: met a jour l'index et remetle scroll en bas
+    pub fn select_channel(&mut self, index: usize){
+        //Si l'index est > au nombre de salon
+        if index < self.channels.len(){
+            self.current_channel = index;
+            self.scroll_offset = 0; //Met en bas
+        }
     }
 }
