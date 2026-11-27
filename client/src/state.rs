@@ -33,6 +33,7 @@ pub struct AppState{
     pub scroll_offset: u16, //0 = collé en bas
     pub channels_area: Rect, //Zone panneau gauche => les salons
     pub input_area: Rect, //Zone panneau droite => chat
+    pub users: Vec<(String, bool)>, // Nom utilisateur + status (est en ligne ou non)
 }
 
 //Implementation de l'etat de l'application
@@ -61,12 +62,28 @@ impl AppState{
             scroll_offset: 0, //Position du scroll par defaut
             channels_area: Rect::default(), //Zone du panneau de gauche les salons
             input_area: Rect::default(), //Zone du panneau de droite du chat
+            users: Vec::new(),
         }
     }
 
     //Activer - Desactiver un salon
     pub fn active_channel_name(&self) -> &str{
         &self.channels[self.current_channel]
+    }
+
+    //Utilisateur en ligne ou non
+    pub fn set_user_online(&mut self, username: &str, online: bool){
+        let trimmed = username.trim();
+        //Si le nom est vide
+        if trimmed.is_empty() || trimmed == "Système" {
+            return;
+        }
+        //Check le status => online
+        if let Some((_, is_on_line)) = self.users.iter_mut().find(|(u, _)| u == trimmed){
+            *is_on_line = online
+        }else{
+            self.users.push((trimmed.to_string(), online));
+        }
     }
 
     //Valider et ajouter un message (Salon + auteur + contenu du message)
@@ -78,13 +95,22 @@ impl AppState{
     }
 
     pub fn on_network_message(&mut self, channel: String,author: String, content: String){
+        if author == "Système"{
+            if let Some(pseudo) = content.strip_suffix(" s'est déconnecté"){
+                self.set_user_online(pseudo, false)
+            }
+        }else{
+            self.set_user_online(&author, true)
+        }
         //Si chat est actif
-        let is_active = self.screen == ScreenMode::Chat && self.active_channel_name() == channel;
+        let is_active = self.active_channel_name() == channel;
         //Ajoute un message => ce truc n'est pas encore lu
         self.push_message(&channel, author, content);
         //Check le scroll des salons
         if is_active{
             self.scroll_offset = 0; //Met en bas du scroll
+        }else{
+            // ici tu pourras incrémenter le compteur unread du salon
         }
     }
 

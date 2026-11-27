@@ -69,9 +69,9 @@ fn color_for_author(author: &str, own_username: &str) -> Color {
 
 pub fn draw_chat(frame: &mut Frame, state: &mut AppState) {
     //Couper le layout principale en 2 parties horizontale
-    let root = Layout::default()
+    let cols = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(20), Constraint::Percentage(80)])
+        .constraints([Constraint::Percentage(20), Constraint::Percentage(60), Constraint::Percentage(20)])
         .split(frame.area());
     //-----------------------------------------------PANNEAU DE GAUCHE--------------------------------------------//
     //Colonne de gauche 20% => salon
@@ -111,15 +111,15 @@ pub fn draw_chat(frame: &mut Frame, state: &mut AppState) {
             .borders(Borders::ALL)
             .border_style(Style::default().fg(channels_border)),
     );
-    state.channels_area = root[0];
+    state.channels_area = cols[0];
     //Afficher le panneau de gauche
-    frame.render_widget(channels_widget, root[0]);
-    //-----------------------------------------------PANNEAU DE DROITE-----------------------------------------------//
+    frame.render_widget(channels_widget, cols[0]);
+    //-----------------------------------------------PANNEAU DU CENTRE-----------------------------------------------//
     //Historique + zone de saisie
     let right = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(1), Constraint::Max(3)])
-        .split(root[1]);
+        .split(cols[1]);
     state.input_area = right[1];
     //Salon en cours
     let current_channel = state.active_channel_name();
@@ -200,4 +200,28 @@ pub fn draw_chat(frame: &mut Frame, state: &mut AppState) {
         let cursor_y = right[1].y + 1;
         frame.set_cursor_position((cursor_x, cursor_y));
     }
+
+    //-------------------------------------------PANNEAU DE DROITE (USERS)-----------------------//
+    let member_items: Vec<ListItem> = state
+        .users
+        .iter()
+        .map(|(username, online)|{
+            let (icon, color) = if *online {
+                ("● ", Color::Green)
+            } else {
+                ("○ ", Color::Red)
+            };
+            //Instance de la liste
+            ListItem::new(Line::from(vec![
+                Span::styled(icon, Style::default().fg(color).add_modifier(Modifier::BOLD)),
+                Span::raw(username),
+            ]))
+        }).collect();
+    let members_widget = List::new(member_items).block(
+        Block::default()
+            .title("- MEMBRES -")
+            .borders(Borders::ALL)
+    );
+    //Afficher le bloc de droite = les membres
+    frame.render_widget(members_widget, cols[2])
 }
